@@ -2,45 +2,10 @@
 #include "Serialization.h"
 #include <vector>
 #include <fstream>
-//class BinaryFileRead
-//{
-//	
-//	std::vector<std::string> nameStack;
-//	void GetName()
-//	{
-//		valueName = "";
-//		for (int i = 0; i < nameStack.size(); i++)
-//		{
-//			valueName += nameStack[i];
-//			if (i != nameStack.size() - 1)
-//			{
-//				valueName += ".";
-//			}
-//		}
-//	}
-//
-//public:
-//	BinaryFileRead(){}
-//
-//	template<typename T>
-//	void Serialize(T& data, const string& name)
-//	{
-//		nameStack.push_back(name);
-//		SerializeTraits<T>::Serialize(data, *this);
-//		nameStack.pop_back();
-//	}
-//
-//	template<typename T>
-//	void Serialize(T* data, const string& name) 
-//	{
-//		if (data != nullptr)
-//		{
-//			nameStack.push_back(name);
-//			GetName();
-//			nameStack.pop_back();
-//		}
-//	}
-//};
+class BinaryFileRead
+{
+	
+};
 
 class BinaryFileWrite
 {
