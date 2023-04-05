@@ -4,6 +4,7 @@
 #include <fstream>
 #include <unordered_map>
 #include <string>
+#include <Modules/Log/Log.h>
 
 struct BinaryFileMark
 {
@@ -25,6 +26,11 @@ public:
 	BinaryFileRead() {}
 	BinaryFileRead(const char* fileName)
 	{
+		OpenBinaryFile(fileName);
+	}
+
+	bool OpenBinaryFile(const char* fileName)
+	{
 		file.open(fileName, std::ios::binary | std::ios::in);
 		if (file.is_open())
 		{
@@ -39,13 +45,21 @@ public:
 
 			int i = 0;
 			while (i < headBufferSize)
-			{	
+			{
 				ValueInfo valueInfo;
 				i = ValueInfo::ReadValueInfo(headBuffer, i, valueInfo);
 				valueMap.insert(std::make_pair(std::string(valueInfo.name), std::make_pair(valueInfo.offset, valueInfo.dataSize)));
 			}
+
+			return true;
 		}
-		//todo: warning log
+		else
+		{
+			std::string msg = "Can not find file " + std::string(fileName);
+			ErrorMessage(msg);
+
+			return false;
+		}
 	}
 
 	template<typename T>
@@ -94,9 +108,25 @@ public:
 	BinaryFileWrite() {}
 	BinaryFileWrite(const char* fileName)
 	{
+		OpenBinaryFile(fileName);
+	}
+
+	bool OpenBinaryFile(const char* fileName)
+	{
 		file.open(fileName, std::ios::binary | std::ios::out);
-		//todo: warning log
-		dataBuffer = allocator.AllocateArray<char>(dataBufferSize);
+		if (file.is_open())
+		{
+			dataBuffer = allocator.AllocateArray<char>(dataBufferSize);
+
+			return true;
+		}
+		else
+		{
+			std::string msg = "Can not find file " + std::string(fileName);
+			ErrorMessage(msg);
+
+			return false;
+		}
 	}
 
 	template<typename T>
@@ -165,12 +195,18 @@ public:
 	}
 };
 
-#define BINARY_FILE_SERIALIZE_WRITE(object, filename) \
-BinaryFileWrite write(filename); \
-object.Serialize(write); \
-write.EndSerialize();
+#define BINARY_FILE_SERIALIZE_WRITE(object, fileName) \
+BinaryFileWrite write; \
+if(write.OpenBinaryFile(fileName)) \
+{ \
+	object.Serialize(write); \
+	write.EndSerialize(); \
+}
 
-#define BINARY_FILE_SERIALIZE_READ(object, filename) \
-BinaryFileRead read(filename); \
-object.Serialize(read); \
-read.EndSerialize();
+#define BINARY_FILE_SERIALIZE_READ(object, fileName) \
+BinaryFileRead read; \
+if(read.OpenBinaryFile(fileName)) \
+{ \
+	object.Serialize(read); \
+	read.EndSerialize(); \
+}

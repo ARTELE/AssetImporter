@@ -28,7 +28,7 @@ class SerializeBase
 protected:
 	std::vector<std::string> nameStack;
 	SystemAllocator allocator;
-	
+
 	string GetName()
 	{
 		string valueName = "";
@@ -54,10 +54,10 @@ enum ResourceType
 
 struct ValueInfo
 {
-	ValueInfo(){}
-	ValueInfo(const char* name, uint32_t offset, uint32_t dataSize) 
-	: offset(offset)
-	, dataSize(dataSize)
+	ValueInfo() {}
+	ValueInfo(const char* name, uint32_t offset, uint32_t dataSize)
+		: offset(offset)
+		, dataSize(dataSize)
 	{
 		nameStrLength = strlen(name);
 		int alignLength = nameStrLength + (4 - (nameStrLength % 4));
@@ -67,10 +67,10 @@ struct ValueInfo
 		nameStrLength = alignLength;
 	}
 
-	ValueInfo(const ValueInfo& valueInfo) 
-	:  nameStrLength(valueInfo.nameStrLength)
-	 , offset(valueInfo.offset)
-	 , dataSize(valueInfo.dataSize)
+	ValueInfo(const ValueInfo& valueInfo)
+		: nameStrLength(valueInfo.nameStrLength)
+		, offset(valueInfo.offset)
+		, dataSize(valueInfo.dataSize)
 	{
 		if (name != nullptr)
 		{
