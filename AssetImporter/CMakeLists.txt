@@ -5,6 +5,7 @@
 include_directories(AssetImporter/)
 include_directories(3rdlibrary/stb)
 include_directories(Asset/)
+include_directories(Core/)
 include_directories(./)
 
 
@@ -12,7 +13,7 @@ include_directories(./)
 add_executable (AssetImporter 
 "main.cpp"  
 "AssetImporter/AssetImporter.h"
-"AssetImporter/PictureImporter/PictureImporter.cpp" "Serialization/BinaryFileSerialization.h")
+"AssetImporter/PictureImporter/PictureImporter.cpp" "Serialization/BinaryFileSerialization.h" "Core/Allocator/BaseAllocator.h" "Core/Allocator/SystemAllocator.h")
 
 
 

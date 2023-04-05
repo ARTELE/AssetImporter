@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
+#include <vector>
 #include<concepts>
+#include <Core/Allocator/SystemAllocator.h>
 using namespace std;
 
 #define SERIALIZE(x) serializer.Serialize(x, #x)
@@ -19,6 +21,29 @@ public:
 	{
 		data.Serialize(serialize);
 	}
+};
+
+class SerializeBase
+{
+protected:
+	std::vector<std::string> nameStack;
+	SystemAllocator allocator;
+	
+	string GetName()
+	{
+		string valueName = "";
+		for (int i = 0; i < nameStack.size(); i++)
+		{
+			valueName += nameStack[i];
+			if (i != nameStack.size() - 1)
+			{
+				valueName += ".";
+			}
+		}
+		return valueName;
+	}
+
+public:
 };
 
 enum ResourceType
@@ -73,6 +98,12 @@ struct ValueInfo
 		memcpy(&valueInfo.nameStrLength, buffer + bufferOffset, sizeof(uint32_t));
 		bufferOffset += sizeof(uint32_t);
 
+		if (valueInfo.name != nullptr)
+		{
+			delete[] valueInfo.name;
+			valueInfo.name = nullptr;
+		}
+		valueInfo.name = new char[valueInfo.nameStrLength];
 		memcpy(valueInfo.name, buffer + bufferOffset, valueInfo.nameStrLength);
 		bufferOffset += valueInfo.nameStrLength;
 
@@ -94,16 +125,16 @@ struct ValueInfo
 
 		uint32_t bufferOffset = offset;
 		memcpy(buffer + bufferOffset, &valueInfo.nameStrLength, sizeof(uint32_t));
-		bufferOffset += 4;
+		bufferOffset += sizeof(uint32_t);
 
 		memcpy(buffer + bufferOffset, valueInfo.name, valueInfo.nameStrLength);
 		bufferOffset += valueInfo.nameStrLength;
 
-		memcpy(buffer + bufferOffset, &offset, sizeof(uint32_t));
-		bufferOffset += 4;
+		memcpy(buffer + bufferOffset, &valueInfo.offset, sizeof(uint32_t));
+		bufferOffset += sizeof(uint32_t);
 
 		memcpy(buffer + bufferOffset, &valueInfo.dataSize, sizeof(uint32_t));
-		bufferOffset += 4;
+		bufferOffset += sizeof(uint32_t);
 
 		return bufferOffset;
 	}
