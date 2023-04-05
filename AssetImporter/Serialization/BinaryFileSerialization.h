@@ -76,9 +76,9 @@ public:
 			file.read((char*)&mark, sizeof(BinaryFileMark));
 			file.read((char*)&headBufferSize, sizeof(uint32_t));
 			file.read((char*)&dataBufferSize, sizeof(uint32_t));
-			headBuffer = allocator.AllocateArray<char>(headBufferSize);
+			headBuffer = allocator.AllocateArray<char>(headBufferSize, "BinaryFileRead::BeginSerialize headBufferSize");
 			file.read(headBuffer, headBufferSize);
-			dataBuffer = allocator.AllocateArray<char>(dataBufferSize);
+			dataBuffer = allocator.AllocateArray<char>(dataBufferSize, "BinaryFileRead::BeginSerialize dataBufferSize");
 			file.read(dataBuffer, dataBufferSize);
 
 			int i = 0;
@@ -156,7 +156,7 @@ public:
 		if (dataOffset + 128 >= dataBufferSize)
 		{
 			dataBufferSize *= 2;
-			char* newDataBuffer = allocator.AllocateArray<char>(dataBufferSize);
+			char* newDataBuffer = allocator.AllocateArray<char>(dataBufferSize, "BinaryFileWrite::BeginSerialize dataBufferSize");
 			memcpy(newDataBuffer, dataBuffer, dataOffset);
 			allocator.Deallocate(dataBuffer);
 			dataBuffer = newDataBuffer;
@@ -167,7 +167,7 @@ public:
 
 	void BeginSerialize()
 	{
-		dataBuffer = allocator.AllocateArray<char>(dataBufferSize);
+		dataBuffer = allocator.AllocateArray<char>(dataBufferSize, "BinaryFileWrite::BeginSerialize dataBufferSize");
 	}
 
 	void EndSerialize()
@@ -179,7 +179,7 @@ public:
 			headBufferSize += 12;
 		}
 
-		char* headBuffer = allocator.AllocateArray<char>(headBufferSize);
+		char* headBuffer = allocator.AllocateArray<char>(headBufferSize, "BinaryFileWrite::BeginSerialize headBufferSize");
 		int offset = 0;
 		for (int i = 0; i < valueInfos.size(); i++)
 		{
@@ -210,6 +210,7 @@ public:
 BinaryFileWrite write; \
 if(write.OpenBinaryFile(fileName)) \
 { \
+	write.BeginSerialize(); \
 	object.Serialize(write); \
 	write.EndSerialize(); \
 }
@@ -218,6 +219,7 @@ if(write.OpenBinaryFile(fileName)) \
 BinaryFileRead read; \
 if(read.OpenBinaryFile(fileName)) \
 { \
+	read.BeginSerialize(); \
 	object.Serialize(read); \
 	read.EndSerialize(); \
 }

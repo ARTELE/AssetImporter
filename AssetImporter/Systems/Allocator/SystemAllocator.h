@@ -57,7 +57,6 @@ public:
 	{
 		if (memoryAddresses.size() > 0)
 		{
-			//todo: log warning
 			DeallocateAll();
 		}
 	}

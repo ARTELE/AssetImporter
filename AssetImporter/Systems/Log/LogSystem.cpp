@@ -45,6 +45,28 @@ void LogSystem::OutPutMessage(std::tuple<std::string, std::string, LogLevel> mes
 		}
 		std::cout << std::get<1>(message) << std::endl;
 	}
+	
+	if (fileMessage)
+	{
+		logFile << "[" + std::get<0>(message) + "]";
+		switch (std::get<2>(message))
+		{
+		case LogLevel::LOG:
+			logFile << "[LOG]";
+			break;
+
+		case LogLevel::WARNIMG:
+			logFile << "[WARNING]";
+			break;
+
+		case LogLevel::ERROR:
+			logFile << "[ERROR]";
+			break;
+
+		default: break;
+		}
+		logFile << std::get<1>(message) << std::endl;
+	}
 }
 
 void LogSystem::Log(std::string message)

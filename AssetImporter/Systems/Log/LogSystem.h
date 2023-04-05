@@ -5,6 +5,7 @@
 #include <vector>
 #include <tuple>
 #include <mutex>
+#include <fstream>
 
 class LogSystem
 {
@@ -15,6 +16,7 @@ class LogSystem
 		ERROR = 2,
 	};
 	std::mutex mutex;
+	std::ofstream logFile;
 
 	bool consoleMessage = true;
 	bool fileMessage = true;
@@ -25,7 +27,7 @@ class LogSystem
 	void OutPutMessage(std::tuple<std::string, std::string, LogLevel> message);
 
 public:
-	LogSystem() {}
+	LogSystem() { logFile.open("EngineLog.log"); }
 	
 	void Log(std::string message);
 	void Warning(std::string message);
