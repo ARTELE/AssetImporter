@@ -2,6 +2,7 @@
 #include "BaseAllocator.h"
 #include <unordered_map>
 #include <iostream>
+#include <Modules/Log/Log.h>
 class SystemAllocator : public BaseAllocator
 {
 	std::unordered_map<char*, std::pair<std::string, uint32_t>> memoryAddresses;
@@ -41,7 +42,12 @@ public:
 		for (auto& memory : memoryAddresses)
 		{
 			delete[] memory.first;
-			std::cout << "Warning: Memory leak. Tag:" << memory.second.first << " Size:" << memory.second.second << " Bytes. SystemAllocator will auto deallocate." << std::endl;
+			std::string msg = "Memory leak. Tag:";
+			msg += memory.second.first;
+			msg += " Size:";
+			msg += std::to_string(memory.second.second);
+			msg += " Bytes. SystemAllocator will auto deallocate.";
+			WarningMessage(msg);
 		}
 
 		memoryAddresses.clear();

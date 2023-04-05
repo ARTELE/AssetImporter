@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Serialization/BinaryFileSerialization.h"
+#include <Systems/Log/LogSystem.h>
 using namespace std;
 
 struct InPackage
@@ -43,11 +44,14 @@ struct TestPackage
 
 int main()
 {
+	LogMessage("Begin");
+
 	TestPackage A = TestPackage(123, 456, 78, 999, InPackage(321, 654, 987));
 	BINARY_FILE_SERIALIZE_WRITE(A, "111.bin");
 
 	TestPackage B;
 	BINARY_FILE_SERIALIZE_READ(B, "111.bin");
 
+	LogMessage("End");
 	return 0;
 }
