@@ -34,23 +34,6 @@ public:
 		file.open(fileName, std::ios::binary | std::ios::in);
 		if (file.is_open())
 		{
-			BinaryFileMark mark;
-			file.read((char*)&mark, sizeof(BinaryFileMark));
-			file.read((char*)&headBufferSize, sizeof(uint32_t));
-			file.read((char*)&dataBufferSize, sizeof(uint32_t));
-			headBuffer = allocator.AllocateArray<char>(headBufferSize);
-			file.read(headBuffer, headBufferSize);
-			dataBuffer = allocator.AllocateArray<char>(dataBufferSize);
-			file.read(dataBuffer, dataBufferSize);
-
-			int i = 0;
-			while (i < headBufferSize)
-			{
-				ValueInfo valueInfo;
-				i = ValueInfo::ReadValueInfo(headBuffer, i, valueInfo);
-				valueMap.insert(std::make_pair(std::string(valueInfo.name), std::make_pair(valueInfo.offset, valueInfo.dataSize)));
-			}
-
 			return true;
 		}
 		else
@@ -84,16 +67,40 @@ public:
 
 		nameStack.pop_back();
 	}
+	
+	void BeginSerialize()
+	{
+		if (file.is_open())
+		{
+			BinaryFileMark mark;
+			file.read((char*)&mark, sizeof(BinaryFileMark));
+			file.read((char*)&headBufferSize, sizeof(uint32_t));
+			file.read((char*)&dataBufferSize, sizeof(uint32_t));
+			headBuffer = allocator.AllocateArray<char>(headBufferSize);
+			file.read(headBuffer, headBufferSize);
+			dataBuffer = allocator.AllocateArray<char>(dataBufferSize);
+			file.read(dataBuffer, dataBufferSize);
+
+			int i = 0;
+			while (i < headBufferSize)
+			{
+				ValueInfo valueInfo;
+				i = ValueInfo::ReadValueInfo(headBuffer, i, valueInfo);
+				valueMap.insert(std::make_pair(std::string(valueInfo.name), std::make_pair(valueInfo.offset, valueInfo.dataSize)));
+			}
+		}
+	}
 
 	void EndSerialize()
 	{
 		file.close();
+
+		allocator.Deallocate(dataBuffer);
+		allocator.Deallocate(headBuffer);
 	}
 
 	~BinaryFileRead()
 	{
-		allocator.Deallocate(dataBuffer);
-		allocator.Deallocate(headBuffer);
 	}
 };
 
@@ -116,8 +123,6 @@ public:
 		file.open(fileName, std::ios::binary | std::ios::out);
 		if (file.is_open())
 		{
-			dataBuffer = allocator.AllocateArray<char>(dataBufferSize);
-
 			return true;
 		}
 		else
@@ -160,6 +165,11 @@ public:
 		nameStack.pop_back();
 	}
 
+	void BeginSerialize()
+	{
+		dataBuffer = allocator.AllocateArray<char>(dataBufferSize);
+	}
+
 	void EndSerialize()
 	{
 		uint32_t headBufferSize = 0;
@@ -186,12 +196,13 @@ public:
 		allocator.Deallocate(headBuffer);
 
 		file.close();
+		
 		dataOffset = 0;
+		allocator.Deallocate(dataBuffer);
 	}
 
 	~BinaryFileWrite()
 	{
-		allocator.Deallocate(dataBuffer);
 	}
 };
 
