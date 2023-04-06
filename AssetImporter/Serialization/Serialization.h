@@ -6,6 +6,7 @@
 using namespace std;
 
 #define SERIALIZE(x) serializer.Serialize(x, #x)
+#define SERIALIZE_PTR(x, size) serializer.SerializePtr(x, size, #x)
 #define SERIALIZE_BASE(x) Serialize(x, #x)
 #define SERIALIZE_ARRAY_ELEMENT(x, i) serializer.Serialize(x[i], std::string(#x) + "[" + std::to_string(i) + "]")
 

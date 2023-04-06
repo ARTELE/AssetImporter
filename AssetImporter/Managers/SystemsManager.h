@@ -5,5 +5,3 @@ class SystemsManager
 public:
 	static LogSystem logSystem;
 };
-
-LogSystem SystemsManager::logSystem;

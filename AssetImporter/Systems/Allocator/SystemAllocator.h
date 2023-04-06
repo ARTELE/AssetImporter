@@ -8,13 +8,14 @@ class SystemAllocator : public BaseAllocator
 	std::unordered_map<char*, std::pair<std::string, uint32_t>> memoryAddresses;
 public:
 
-	SystemAllocator() {}
+	SystemAllocator() { label = "SystemAllocator"; }
+	SystemAllocator(std::string label) : BaseAllocator(label) {}
 	
 	template<typename T>
 	T* AllocateArray(size_t size, std::string tag = "no_name")
 	{
 		T* tempMemory = new T[size];
-		memoryAddresses.insert(std::make_pair((char*)tempMemory, std::make_pair(tag, size * sizeof(T))));
+		memoryAddresses.insert(std::make_pair((char*)tempMemory, std::make_pair(std::string(label + "-" + tag), size * sizeof(T))));
 		return tempMemory;
 	}
 
@@ -22,7 +23,7 @@ public:
 	T* Allocate(std::string tag = "no_name")
 	{
 		T* tempMemory = new T;
-		memoryAddresses.insert(std::make_pair((char*)tempMemory, std::make_pair(tag, sizeof(T))));
+		memoryAddresses.insert(std::make_pair((char*)tempMemory, std::make_pair(std::string(label + "-" + tag), sizeof(T))));
 		return tempMemory;
 	}
 
@@ -42,7 +43,7 @@ public:
 		for (auto& memory : memoryAddresses)
 		{
 			delete[] memory.first;
-			std::string msg = "Memory leak. Tag:";
+			std::string msg = "Memory leak. ";
 			msg += memory.second.first;
 			msg += " Size:";
 			msg += std::to_string(memory.second.second);

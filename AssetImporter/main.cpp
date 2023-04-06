@@ -1,6 +1,6 @@
 #include <iostream>
 #include "Serialization/BinaryFileSerialization.h"
-#include <Systems/Log/LogSystem.h>
+#include <Modules/Log/Log.h>
 using namespace std;
 
 struct InPackage
@@ -27,6 +27,8 @@ struct TestPackage
 	long ccc = 0;
 	double ddd = 0;
 	InPackage in;
+	char* hhh = nullptr;
+	SystemAllocator allocator;
 
 	TestPackage() {}
 	TestPackage(int a, float b, long c, double d, InPackage i) : aaa(a), bbb(b), ccc(c), ddd(d), in(i) {}
@@ -34,11 +36,13 @@ struct TestPackage
 	template<typename Serialize>
 	void Serialize(Serialize& serializer)
 	{
+		serializer.SetUserAllocator(&allocator);
 		SERIALIZE(aaa);
 		SERIALIZE(bbb);
 		SERIALIZE(ccc);
 		SERIALIZE(ddd);
 		SERIALIZE(in);
+		SERIALIZE_PTR(hhh, 16);
 	}
 };
 
@@ -46,7 +50,10 @@ int main()
 {
 	LogMessage("Begin");
 
+	SystemAllocator allocator;
 	TestPackage A = TestPackage(123, 456, 78, 999, InPackage(321, 654, 987));
+	A.hhh = allocator.AllocateArray<char>(16);
+	strcpy(A.hhh, "qwertyuiop");
 	BINARY_FILE_SERIALIZE_WRITE(A, "111.bin");
 
 	TestPackage B;

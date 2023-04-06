@@ -13,6 +13,7 @@ include_directories(./)
 add_executable (AssetImporter 
 "main.cpp"  
 "AssetImporter/AssetImporter.h"
+"AssetImporter/PictureImporter/PictureImporter.h"
 "AssetImporter/PictureImporter/PictureImporter.cpp" 
 "Serialization/BinaryFileSerialization.h" 
 "Systems/Allocator/BaseAllocator.h" 
@@ -21,7 +22,8 @@ add_executable (AssetImporter
 "Systems/Log/LogSystem.h" 
 "Systems/Log/LogSystem.cpp"
 "Managers/SystemsManager.h"
-)
+ "Managers/SystemsManager.cpp" 
+ "Modules/Log/Log.cpp")
 
 
 

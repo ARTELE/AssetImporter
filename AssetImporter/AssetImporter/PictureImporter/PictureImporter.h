@@ -7,9 +7,10 @@ class PictureImporter : public AssetImporter
 {
 	int width, height, channels;
 	unsigned char* data;
-	Picture picture;
+
 	virtual bool LoadFile(std::string fileName);
 	virtual bool StructureData();
 	virtual bool Destroy();
 public:
+
 };
