@@ -52,7 +52,7 @@ int main()
 
 	SystemAllocator allocator;
 	TestPackage A = TestPackage(123, 456, 78, 999, InPackage(321, 654, 987));
-	A.hhh = allocator.AllocateArray<char>(16);
+	A.hhh = allocator.Allocate<char>(16);
 	strcpy(A.hhh, "qwertyuiop");
 	BINARY_FILE_SERIALIZE_WRITE(A, "111.bin");
 
