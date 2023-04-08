@@ -6,32 +6,17 @@
 class SystemAllocator : public BaseAllocator
 {
 	std::unordered_map<char*, std::pair<std::string, uint32_t>> memoryAddresses;
-public:
-
-	SystemAllocator() { label = "SystemAllocator"; }
-	SystemAllocator(std::string label) : BaseAllocator(label) {}
-	
-	template<typename T>
-	T* AllocateArray(size_t size, std::string tag = "no_name")
+	virtual char* InternalAllocate(size_t size, std::string tag = "no_name")
 	{
-		T* tempMemory = new T[size];
-		memoryAddresses.insert(std::make_pair((char*)tempMemory, std::make_pair(std::string(label + "-" + tag), size * sizeof(T))));
+		char* tempMemory = new char[size];
+		memoryAddresses.insert(std::make_pair(tempMemory, std::make_pair(std::string(label + "-" + tag), size)));
 		return tempMemory;
 	}
 
-	template<typename T>
-	T* Allocate(std::string tag = "no_name")
-	{
-		T* tempMemory = new T;
-		memoryAddresses.insert(std::make_pair((char*)tempMemory, std::make_pair(std::string(label + "-" + tag), sizeof(T))));
-		return tempMemory;
-	}
-
-	template<typename T>
-	void Deallocate(T* address)
+	virtual void InternalDeallocate(char* address)
 	{
 		auto iter = memoryAddresses.find(address);
-		if(iter != memoryAddresses.end())
+		if (iter != memoryAddresses.end())
 		{
 			memoryAddresses.erase(iter);
 			delete[] address;
@@ -53,6 +38,10 @@ public:
 
 		memoryAddresses.clear();
 	}
+public:
+
+	SystemAllocator() { label = "SystemAllocator"; }
+	SystemAllocator(std::string label) : BaseAllocator(label) {}
 
 	~SystemAllocator() 
 	{

@@ -99,7 +99,7 @@ public:
 				}
 				else
 				{
-					data = userAllocator->AllocateArray<T>(iter->second.second);
+					data = userAllocator->Allocate<T>(iter->second.second);
 				}
 			}
 			memcpy(data, dataBuffer + iter->second.first, iter->second.second);
@@ -116,9 +116,9 @@ public:
 			file.read((char*)&mark, sizeof(BinaryFileMark));
 			file.read((char*)&headBufferSize, sizeof(uint32_t));
 			file.read((char*)&dataBufferSize, sizeof(uint32_t));
-			headBuffer = allocator.AllocateArray<char>(headBufferSize, "BinaryFileRead::BeginSerialize headBufferSize");
+			headBuffer = allocator.Allocate<char>(headBufferSize, "BinaryFileRead::BeginSerialize headBufferSize");
 			file.read(headBuffer, headBufferSize);
-			dataBuffer = allocator.AllocateArray<char>(dataBufferSize, "BinaryFileRead::BeginSerialize dataBufferSize");
+			dataBuffer = allocator.Allocate<char>(dataBufferSize, "BinaryFileRead::BeginSerialize dataBufferSize");
 			file.read(dataBuffer, dataBufferSize);
 
 			int i = 0;
@@ -158,7 +158,7 @@ class BinaryFileWrite : public SerializeBase
 		if (dataOffset + 128 >= dataBufferSize)
 		{
 			dataBufferSize *= 2;
-			char* newDataBuffer = allocator.AllocateArray<char>(dataBufferSize, "BinaryFileWrite::BeginSerialize dataBufferSize");
+			char* newDataBuffer = allocator.Allocate<char>(dataBufferSize, "BinaryFileWrite::BeginSerialize dataBufferSize");
 			memcpy(newDataBuffer, dataBuffer, dataOffset);
 			allocator.Deallocate(dataBuffer);
 			dataBuffer = newDataBuffer;
@@ -236,7 +236,7 @@ public:
 
 	void BeginSerialize()
 	{
-		dataBuffer = allocator.AllocateArray<char>(dataBufferSize, "BinaryFileWrite::BeginSerialize dataBufferSize");
+		dataBuffer = allocator.Allocate<char>(dataBufferSize, "BinaryFileWrite::BeginSerialize dataBufferSize");
 	}
 
 	void EndSerialize()
@@ -248,7 +248,7 @@ public:
 			headBufferSize += 12;
 		}
 
-		char* headBuffer = allocator.AllocateArray<char>(headBufferSize, "BinaryFileWrite::BeginSerialize headBufferSize");
+		char* headBuffer = allocator.Allocate<char>(headBufferSize, "BinaryFileWrite::BeginSerialize headBufferSize");
 		int offset = 0;
 		for (int i = 0; i < valueInfos.size(); i++)
 		{
