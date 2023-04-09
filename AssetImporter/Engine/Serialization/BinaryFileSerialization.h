@@ -5,8 +5,8 @@
 #include <unordered_map>
 #include <string>
 #include <assert.h>
-#include <Modules/Log/Log.h>
-#include <Systems/Allocator/BaseAllocator.h>
+#include <Engine/Modules/Log/Log.h>
+#include <Engine/Systems/Allocator/BaseAllocator.h>
 
 struct BinaryFileMark
 {
@@ -23,7 +23,6 @@ class BinaryFileRead : public SerializeBase
 	char* headBuffer = nullptr;
 	char* dataBuffer = nullptr;
 	std::unordered_map<std::string, std::pair<uint32_t, uint32_t>> valueMap;
-	SystemAllocator* userAllocator = nullptr;
 
 public:
 	BinaryFileRead() {}
@@ -46,11 +45,6 @@ public:
 
 			return false;
 		}
-	}
-
-	void SetUserAllocator(SystemAllocator* allocator)
-	{
-		userAllocator = allocator;
 	}
 
 	template<typename T>
@@ -107,6 +101,23 @@ public:
 
 		nameStack.pop_back();
 	}
+
+	template<typename T>
+	void Serialize(string& data, const string& name)
+	{
+		nameStack.push_back(name);
+		string valueName = GetName();
+
+		std::string valueName = GetName();
+		auto iter = valueMap.find(valueName);
+		if (iter != valueMap.end())
+		{
+			data.resize(iter->second.second);
+			memcpy(data.data(), dataBuffer + iter->second.first, iter->second.second);
+		}
+
+		nameStack.pop_back();
+	}
 	
 	void BeginSerialize()
 	{
@@ -151,13 +162,12 @@ class BinaryFileWrite : public SerializeBase
 	uint32_t dataOffset = 0;
 	char* dataBuffer = nullptr;
 	uint32_t dataBufferSize = 1024;
-	SystemAllocator* userAllocator = nullptr;
 
-	void ExpansionBuffer()
+	void ExpansionBuffer(size_t size)
 	{
-		if (dataOffset + 128 >= dataBufferSize)
+		if (dataOffset + size >= dataBufferSize)
 		{
-			dataBufferSize *= 2;
+			dataBufferSize += size;
 			char* newDataBuffer = allocator.Allocate<char>(dataBufferSize, "BinaryFileWrite::BeginSerialize dataBufferSize");
 			memcpy(newDataBuffer, dataBuffer, dataOffset);
 			allocator.Deallocate(dataBuffer);
@@ -187,11 +197,6 @@ public:
 		}
 	}
 
-	void SetUserAllocator(SystemAllocator* allocator)
-	{
-		userAllocator = allocator;
-	}
-
 	template<typename T>
 	void Serialize(T& data, const string& name)
 	{
@@ -206,10 +211,10 @@ public:
 		nameStack.push_back(name);
 		string valueName = GetName();
 
+		ExpansionBuffer(sizeof(T));
 		memcpy(dataBuffer + dataOffset, &data, sizeof(T));
 		valueInfos.push_back(ValueInfo(valueName.c_str(), dataOffset, sizeof(T)));
 		dataOffset += sizeof(T);
-		ExpansionBuffer();
 
 		nameStack.pop_back();
 	}
@@ -226,10 +231,24 @@ public:
 		nameStack.push_back(name);
 		string valueName = GetName();
 
+		ExpansionBuffer(sizeof(T) * size);
 		memcpy(dataBuffer + dataOffset, data, sizeof(T) * size);
 		valueInfos.push_back(ValueInfo(valueName.c_str(), dataOffset, sizeof(T) * size));
 		dataOffset += sizeof(T) * size;
-		ExpansionBuffer();
+
+		nameStack.pop_back();
+	}
+
+	template<typename T>
+	void Serialize(string& data, const string& name)
+	{
+		nameStack.push_back(name);
+		string valueName = GetName();
+
+		ExpansionBuffer(data.size());
+		memcpy(dataBuffer + dataOffset, data.data(), data.size());
+		valueInfos.push_back(ValueInfo(valueName.c_str(), dataOffset, data.size()));
+		dataOffset += data.size();
 
 		nameStack.pop_back();
 	}

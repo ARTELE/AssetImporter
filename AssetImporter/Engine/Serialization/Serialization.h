@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include<concepts>
-#include <Systems/Allocator/SystemAllocator.h>
+#include <Engine/Systems/Allocator/SystemAllocator.h>
 using namespace std;
 
 #define SERIALIZE(x) serializer.Serialize(x, #x)
@@ -29,6 +29,7 @@ class SerializeBase
 protected:
 	std::vector<std::string> nameStack;
 	SystemAllocator allocator;
+	BaseAllocator* userAllocator = nullptr;
 
 	string GetName()
 	{
@@ -45,6 +46,11 @@ protected:
 	}
 
 public:
+
+	void SetUserAllocator(BaseAllocator* allocator)
+	{
+		userAllocator = allocator;
+	}
 };
 
 enum ResourceType

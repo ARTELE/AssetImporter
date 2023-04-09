@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+
 class AssetImporter
 {
 protected:
@@ -7,10 +8,10 @@ protected:
 	std::string outPutFileName;
 
 	virtual bool LoadFile(std::string fileName) = 0;
-	virtual bool StructureData() = 0;
+	virtual bool CreateAsset() = 0;
 	virtual bool Destroy()  = 0;
 public:
-	AssetImporter(const std::string& in, const std::string& out) : inPutFileName(in), outPutFileName(out) {}
+	AssetImporter(){}
 	void Initialize(std::string srcFileName, std::string dstFileName)
 	{
 		inPutFileName = srcFileName;
@@ -18,8 +19,6 @@ public:
 	}
 	bool Import()
 	{
-		return LoadFile(inPutFileName) || StructureData() || Destroy();
+		return LoadFile(inPutFileName) && CreateAsset() && Destroy();
 	}
-
-
 };
