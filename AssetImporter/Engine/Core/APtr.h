@@ -8,12 +8,16 @@ template<typename T>
 class APtr
 {
 	InstanceID instanceId;
-	std::string assetName;
 public:
 	APtr() {}
 	APtr(InstanceID id) : instanceId(id) {}
 
 	InstanceID GetInstanceId() { return instanceId; }
+
+	T* operator->()
+	{
+		return (T*)Managers::objectManager.IDToPointer(instanceId);
+	}
 
 	template<typename Serialize>
 	void Serialize(Serialize& serializer)

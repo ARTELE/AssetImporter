@@ -2,6 +2,7 @@
 #include "Platform/Win64/AssetUtils.h"
 
 InstanceID AssetUtils::id = 10000;
+SystemAllocator AssetUtils::allocator(false);
 
 InstanceID AssetUtils::GenerateInstanceId()
 {

@@ -6,23 +6,7 @@
 class SystemAllocator : public BaseAllocator
 {
 	std::unordered_map<char*, std::pair<std::string, uint32_t>> memoryAddresses;
-	virtual char* InternalAllocate(size_t size, std::string tag = "no_name")
-	{
-		char* tempMemory = new char[size];
-		memoryAddresses.insert(std::make_pair(tempMemory, std::make_pair(std::string(label + "-" + tag), size)));
-		return tempMemory;
-	}
-
-	virtual void InternalDeallocate(char* address)
-	{
-		auto iter = memoryAddresses.find(address);
-		if (iter != memoryAddresses.end())
-		{
-			memoryAddresses.erase(iter);
-			delete[] address;
-		}
-	}
-
+	bool autoDecllocate = true;
 	void DeallocateAll()
 	{
 		for (auto& memory : memoryAddresses)
@@ -41,11 +25,31 @@ class SystemAllocator : public BaseAllocator
 public:
 
 	SystemAllocator() { label = "SystemAllocator"; }
+	SystemAllocator(bool autoDecllocate) : autoDecllocate(autoDecllocate) { label = "SystemAllocator"; }
 	SystemAllocator(std::string label) : BaseAllocator(label) {}
+
+	template<typename T>
+	T* Allocate(size_t size = 1, std::string tag = "no_name")
+	{
+		T* tempMemory = new T[size];
+		memoryAddresses.insert(std::make_pair((char*)tempMemory, std::make_pair(std::string(label + "-" + tag), size)));
+		return tempMemory;
+	}
+
+	template<typename T>
+	void Deallocate(T* address)
+	{
+		auto iter = memoryAddresses.find((char*)address);
+		if (iter != memoryAddresses.end())
+		{
+			memoryAddresses.erase(iter);
+			delete[] address;
+		}
+	}
 
 	~SystemAllocator() 
 	{
-		if (memoryAddresses.size() > 0)
+		if (memoryAddresses.size() > 0 && autoDecllocate)
 		{
 			DeallocateAll();
 		}

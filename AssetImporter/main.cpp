@@ -28,10 +28,14 @@ int main()
 
 	Managers::assetManager.AddAssetPath("Assets");
 	Managers::assetManager.Initialize();
-	PtrTest test;
-	//test.pic = APtr<Picture>(10001);
+	Managers::objectManager.Initialize();
 
+
+	PtrTest test;
 	BINARY_FILE_SERIALIZE_READ(test, "Assets/test.ttt");
+	std :: cout << test.pic->GetInstanceId();
+	//test.pic = APtr<Picture>(10002);
+	//BINARY_FILE_SERIALIZE_WRITE(test, "Assets/test.ttt");
 	
 
 	LogMessage("End");

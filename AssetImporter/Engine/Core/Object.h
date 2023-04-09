@@ -4,7 +4,7 @@
 class Object
 {
 protected:
-	InstanceID instanceId;
+	InstanceID instanceId = 0;
 public:
 	InstanceID GetInstanceId() { return instanceId; }
 	void SetInstanceId(InstanceID value) { instanceId = value; }

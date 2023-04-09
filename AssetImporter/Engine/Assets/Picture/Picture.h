@@ -4,10 +4,11 @@
 #include <Engine/Systems/Allocator/SystemAllocator.h>
 class Picture : public Asset
 {
-	int width, height, channel;
-	unsigned char* data;
+	int width = 0, height = 0, channel = 0;
+	unsigned char* data = nullptr;
 	SystemAllocator allocator;
 public:
+	Picture() {}
 	Picture(int width, int height, int channel, unsigned char* data) : width(width), height(height), channel(channel), data(data) {}
 
 	template<typename Serialize>

@@ -13,6 +13,7 @@ public:
 	InstanceID AssetPathToInstanceId(std::string assetName);
 	std::string InstanceIdToAssetPath(InstanceID id);
 	void AddAsset(std::pair<InstanceID, std::string> asset);
+	std::unordered_map<InstanceID, std::string> GetInstanceIdToAssetMap() { return instanceIdToAsset; }
 
 	template<typename Serialize>
 	void Serialize(Serialize& serializer)

@@ -2,3 +2,4 @@
 
 SystemsManager Managers::systemManager;
 AssetManager Managers::assetManager;
+ObjectManager Managers::objectManager;

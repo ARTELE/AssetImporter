@@ -29,7 +29,7 @@ class SerializeBase
 protected:
 	std::vector<std::string> nameStack;
 	SystemAllocator allocator;
-	BaseAllocator* userAllocator = nullptr;
+	SystemAllocator* userAllocator = nullptr;
 
 	string GetName()
 	{
@@ -47,7 +47,7 @@ protected:
 
 public:
 
-	void SetUserAllocator(BaseAllocator* allocator)
+	void SetUserAllocator(SystemAllocator* allocator)
 	{
 		userAllocator = allocator;
 	}
