@@ -2,7 +2,6 @@
 #include <stb_image.h>
 #include "PictureImporter.h"
 #include <Engine/Assets/Picture/Picture.h>
-#include <Engine/Assets/AssetUtils.h>
 #include <Engine/Modules/Log/Log.h>
 #include <Engine/Serialization/BinaryFileSerialization.h>
 

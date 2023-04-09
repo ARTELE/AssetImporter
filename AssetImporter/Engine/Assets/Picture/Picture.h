@@ -10,6 +10,7 @@ class Picture : public Asset
 public:
 	Picture() {}
 	Picture(int width, int height, int channel, unsigned char* data) : width(width), height(height), channel(channel), data(data) {}
+	Object* Clone() override;
 
 	template<typename Serialize>
 	void Serialize(Serialize& serializer)
