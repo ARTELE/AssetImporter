@@ -10,8 +10,8 @@ class AssetPool
 	std::unordered_map<InstanceID, std::string> instanceIdToAsset;
 public:
 	AssetPool() {}
-	InstanceID AssetToInstanceId(std::string assetName);
-	std::string InstanceIdToAsset(InstanceID id);
+	InstanceID AssetPathToInstanceId(std::string assetName);
+	std::string InstanceIdToAssetPath(InstanceID id);
 	void AddAsset(std::pair<InstanceID, std::string> asset);
 
 	template<typename Serialize>

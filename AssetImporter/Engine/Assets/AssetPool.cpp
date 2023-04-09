@@ -1,6 +1,6 @@
 #include "AssetPool.h"
 
-InstanceID AssetPool::AssetToInstanceId(std::string assetName)
+InstanceID AssetPool::AssetPathToInstanceId(std::string assetName)
 {
 	auto iter = assetToInstanceId.find(assetName);
 	if (iter != assetToInstanceId.end())
@@ -13,7 +13,7 @@ InstanceID AssetPool::AssetToInstanceId(std::string assetName)
 	}
 }
 
-std::string AssetPool::InstanceIdToAsset(InstanceID id)
+std::string AssetPool::InstanceIdToAssetPath(InstanceID id)
 {
 	auto iter = instanceIdToAsset.find(id);
 	if (iter != instanceIdToAsset.end())

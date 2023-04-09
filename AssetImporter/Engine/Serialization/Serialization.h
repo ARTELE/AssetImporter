@@ -51,6 +51,9 @@ public:
 	{
 		userAllocator = allocator;
 	}
+
+	bool IsReading() { return false; }
+	bool IsWriting() { return false; }
 };
 
 enum ResourceType

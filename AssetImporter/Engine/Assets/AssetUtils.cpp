@@ -1,11 +1,11 @@
 #include"AssetUtils.h"
 #include "Platform/Win64/AssetUtils.h"
 
-InstanceID AssetUtils::id = -10000;
+InstanceID AssetUtils::id = 10000;
 
 InstanceID AssetUtils::GenerateInstanceId()
 {
-	return --id;
+	return ++id;
 }
 
 void AssetUtils::ScanAssetsFile(std::vector<std::string>& paths, std::vector<std::string>& assetsFilesName)

@@ -12,13 +12,12 @@ void GetFilesFromPath(const std::string& path, std::vector<std::string>& filesPa
 			{
 				if (std::strcmp(fileinfo.name, ".") != 0 && std::strcmp(fileinfo.name, "..") != 0)
 				{
-					filesPath.push_back(p.assign(path).append("\\").append(fileinfo.name));
 					GetFilesFromPath(p.assign(path).append("\\").append(fileinfo.name), filesPath);
 				}
 			}
 			else
 			{
-				filesPath.push_back(p.assign(fileinfo.name));
+				filesPath.push_back(path + "\\" + p.assign(fileinfo.name));
 			}
 		} while (_findnexti64(hFile, &fileinfo) == 0);
 		_findclose(hFile);

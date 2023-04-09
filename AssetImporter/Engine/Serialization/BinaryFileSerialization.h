@@ -31,6 +31,8 @@ public:
 		OpenBinaryFile(fileName);
 	}
 
+	bool IsReading() { return true; }
+
 	bool OpenBinaryFile(const char* fileName)
 	{
 		file.open(fileName, std::ios::binary | std::ios::in);
@@ -102,13 +104,12 @@ public:
 		nameStack.pop_back();
 	}
 
-	template<typename T>
+	template<>
 	void Serialize(string& data, const string& name)
 	{
 		nameStack.push_back(name);
 		string valueName = GetName();
 
-		std::string valueName = GetName();
 		auto iter = valueMap.find(valueName);
 		if (iter != valueMap.end())
 		{
@@ -181,6 +182,8 @@ public:
 		OpenBinaryFile(fileName);
 	}
 
+	bool IsWriting() {return true; }
+
 	bool OpenBinaryFile(const char* fileName)
 	{
 		file.open(fileName, std::ios::binary | std::ios::out);
@@ -239,7 +242,7 @@ public:
 		nameStack.pop_back();
 	}
 
-	template<typename T>
+	template<>
 	void Serialize(string& data, const string& name)
 	{
 		nameStack.push_back(name);
